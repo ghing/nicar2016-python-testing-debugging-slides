@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Testing and debugging code in Python</title>
+
+		<meta name="description" content="Slides for a workshop at the NICAR 2016 conference on testing and debugging Python code for newsroom developers">
+		<meta name="author" content=Geoff Hing">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+                    <h1>Testing and debugging code in Python</h1>
+                    <p>
+                       <small>Geoff Hing</small>
+                    </p>
+				</section>
+
+                <section>
+                    <h2>Roadmap</h2>
+                    <ul>
+                        <li>Running tests</li> 
+                        <li>Reading error messages</li> 
+                        <li>Outputting debugging messages</li>
+                        <li>Writing testable code</li>
+                        <li>Debugging with pdb</li>
+                    </ul> 
+                </section>
+
+				<section>
+                    <h2>Running tests</h2>
+                    <p>We'll use the CLI for Python's included <a href="(https://docs.python.org/2/library/unittest.html">unittest</a> package.<p>
+                    <pre><code class="hljs">
+python -m unittest tests.test_basic
+                    </code></pre>
+				</section>
+
+                <section>
+                    <h2>Running a specific test case</h2>
+                    <pre><code class="hljs">
+python -m unittest tests.test_basic.NoFailuresTestCase 
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Running a single test</h2>
+                    <pre><code class="hljs">
+python -m unittest tests.test_basic.NoFailuresTestCase.test_true_is_true
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Reading an error message</h2>
+                    <p>Let's run a test that causes an unhandled exception in our code.</p>
+                    <pre><code class="hljs">
+python -m unittest tests.test_result_loader
+                    </code></pre>
+                </section>
+
+				<section>
+                    <h2>Reading an error message</h2>
+                    <pre><code class="hljs">
+Traceback (most recent call last):
+  File "tests/test_result_loader.py", line 13, in test_load_bad_json
+    results = loader.load(sample_json)
+  File "results/__init__.py", line 5, in load
+    parsed = json.loads(s)
+  File "/usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/json/__init__.py", line 339, in loads
+    return _default_decoder.decode(s)
+  File "/usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/json/decoder.py", line 364, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/json/decoder.py", line 382, in raw_decode
+    raise ValueError("No JSON object could be decoded")
+ValueError: No JSON object could be decoded
+                    </code></pre>
+				</section>
+
+                <section>
+                    <h2>Exercise</h2>
+                    <p>Update the result loader so it catches the <code>ValueError</code> and returns an empty list.</p>
+                    <p>Where we should look to fix our code?</p>
+                </section>
+
+                <section>
+                    <h2>Unit Testing</h2>
+                    <p>We want to test the smallest possible piece of code.</p>
+                    <ul>
+                        <li>function</li>
+                        <li>procedure</li>
+                        <li>method</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>What's the unit?</h2>
+                    <p>From <code>tests/test_apstyle.py</code></p>
+                    <pre><code class="hljs">
+class ApStyleNumbersTestCase(unittest.TestCase):
+    def test_format_cardinal_number(self):
+        self.assertEqual(format_cardinal_number(1), "one")
+        self.assertEqual(format_cardinal_number(10), "10")
+        self.assertEqual(format_cardinal_number(1050), "1,050")
+        self.assertEqual(format_cardinal_number(2000000), "2 million")
+                    </code></pre>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
