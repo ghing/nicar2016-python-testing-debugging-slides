@@ -50,12 +50,47 @@
 				</section>
 
                 <section>
+                    <h2>Getting started</h2>
+
+                    <pre><code class="hljs">
+git clone https://github.com/ghing/nicar2016-python-testing-debugging-exercises.git
+cd nicar2016-python-testing-debugging-exercises
+                    </code></pre>
+
+                    <p>or go to <a href="https://github.com/ghing/nicar2016-python-testing-debugging-exercises/">https://github.com/ghing/nicar2016-python-testing-debugging-exercises/</a> and</p>
+
+                    <img src="img/download_zip.png">
+                </section>
+
+                <section>
+                    <h2>Workshop structure</h2>
+
+                    <ul>
+                        <li>Concept</li>
+                        <li>Example</li>
+                        <li>Excercise</li>
+                    </ul>
+                </section>    
+
+                <section>
+                    <h2>Solutions</h2>
+
+                    <p>Raise your hand by tweeting me @geoffhing and sharing a link to
+                    <a href="https://gist.github.com/">https://gist.github.com/</a> or <a href="http://pastebin.com/">http://pastebin.com/</a>.
+                    </p>
+
+                    <p>You can also check your work</p>
+
+                    <pre><code class="hljs">git checkout solutions</a></code></pre>
+                </section>    
+
+                <section>
                     <h2>Roadmap</h2>
                     <ul>
                         <li>Running tests</li> 
                         <li>Reading error messages</li> 
+                        <li>Unit testing</li>
                         <li>Outputting debugging messages</li>
-                        <li>Writing testable code</li>
                         <li>Debugging with pdb</li>
                     </ul> 
                 </section>
@@ -111,7 +146,7 @@ ValueError: No JSON object could be decoded
                 <section>
                     <h2>Exercise</h2>
                     <p>Update the result loader so it catches the <code>ValueError</code> and returns an empty list.</p>
-                    <p>Where we should look to fix our code?</p>
+                    <p>Where should we look to fix our code?</p>
                 </section>
 
                 <section>
@@ -135,6 +170,703 @@ class ApStyleNumbersTestCase(unittest.TestCase):
         self.assertEqual(format_cardinal_number(1050), "1,050")
         self.assertEqual(format_cardinal_number(2000000), "2 million")
                     </code></pre>
+                </section>    
+
+                <section>
+                    <h2>unittest</h2>
+                    <ul>
+                        <li>fixtures</li>
+                        <li>test cases</li>
+                        <li>test suites</li>
+                        <li>test discovery and running</li>
+                    </ul>    
+                </section>    
+
+                <section>
+                    <h2>unittest basics</h2>
+                    <ul>
+                        <li>Create a file: <code>test_<some_identifier_for_what_youre_testing>.py</code></li>
+                        <li><code>import unittest</code></li>
+                        <li>Subclass <code>unittest.TestCase</code></li>
+                        <li>Implement test methods: <code>def test_something(self): self.fail()</code></li>
+                    </ul>    
+                </section>
+
+                <section>
+                    <h2>Assertions help us check our expectations</h2>
+                    <ul>
+                        <li>assertEqual(a, b)</li>
+                        <li>assertNotEqual(a, b)</li>
+                        <li>assertTrue(x)</li>
+                        <li>assertFalse(x)</li>
+                        <li>assertIs(a, b)</li>
+                        <li>assertIsNot(a, b)</li>
+                        <li>assertIsNone(x)</li>
+                        <li>assertIn(a, b)</li>
+                        <li>assertNotIn(a, b)</li>
+                        <li>assertIsInstance(a, b)</li>
+                        <li>assertNotIsInstance(a, b)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Test driven development (TDD)</h2>
+                    <ul>
+                        <li>Write tests first</li>
+                        <li>Watch it fail</li>
+                        <li>Implement unit</li>
+                        <li>Re-run tests until they pass</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Excercise: write a test case</h2>
+                    <p>Implement a test case in <code>tests/test_names.py</code>, then implement <code>parse_name()</code></p>
+                    <p>Takes input like:</p>
+                    <p><code>Hing, Geoff, George</code></p>
+                    <p>Returns</p>
+                    <pre><code class="hljs">
+{
+    "first_name": "Geoff",
+    "last_name": "Hing",
+    "middle_name": "George",
+    "Suffix": None 
+}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Writing testable code</h2>
+                    <ul>
+                        <li>We want to be able to run tests quickly and atomically</li>
+                        <li>Break functionality into functions, methods, classes and modules</li>
+                        <li>How would we test, even if we won't?</li>
+                    </ul>
+                </section>
+
+
+                <section>
+                    <h2>Excercise: refactoring for better testing</h2>
+                    <p>We're going to refactor <code>results.ChicagoResultsLoader</code></p>
+                    <p>Which parses data like <code>tests/data/summary.txt</code></p>
+                    <p>Basic tests:</p>    
+
+                    <pre><code class="hljs">
+python -m unittest tests.test_chicago_result_loader
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Excercise: refactoring for better testing</h2>
+                    <p>Surprise!</p>
+                    <p>Instead of</p>
+
+                    <pre><code class="hljs">
+0079002206900000000000DEM       State's Attorney, Cook County                           Anita Alvarez                         Cook County              001
+                    </code></pre>
+
+                    <p>The data becomes</p>
+
+                    <pre><code class="hljs">
+0079002206900000000000
+                    </code></pre>
+
+                </section>
+
+                <section>
+                    <h2>Excercise: refactoring for better testing</h2>
+                    <ul>
+                        <li>Refactor <code>load()</code> to break out the parsing of line into <code>parse_result()</code></li>
+                        <li>Write a test for that new method</li>
+                        <li>Write the new method</li>
+                        <li>Update <code>load()</code> to use the new method</li>
+                   </ul>
+                </section>
+
+
+                <section>
+                    <h2>Fixtures</h2>
+
+                    <p><code>TestCase.setUp()</code>/<code>TestCase.tearDown()</code></p>
+
+                    <ul>
+                        <li>Define the test environment</li>
+                        <li>Set up test database</li>
+                        <li>Load data from file</li>
+                        <li>Create dummy records</li>
+                        <li>Create reusable instances</li>
+                    </ul>
+                </section>
+
+                <!--
+                <section>
+                    <h2>Excercise: Fixtures</h2>
+
+                    <p>Update <code>tests.test_chicago_result_loader.TestChicagoResultLoader</code> to use a fixture to reuse a single loader instance</code></p>
+                </section>
+                -->
+
+                <section>
+                    <h2>Integration tests</h2>
+                    <ul>
+                        <li>Test how units work together</li>
+                        <li>Test interfaces to external systems</li>
+                        <li>More expensive to run</li>
+                    </ul>    
+                </section>
+
+                <section>
+                    <h2>Next steps</h2>
+                    <ul>
+                        <li>Mocks</li>
+                        <li>Continuous integration</li>
+                        <li>Other runners (nose, unittest2)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Knowing what's going on</h2>
+                </section>
+
+                <section>
+                    <h2>pprint</h2>
+
+                    <pre><code class="hljs">
+>>> import json
+>>> with open('tests/data/ap_elections_loader_recording-1456935370.json') as f:
+...     data = json.load(f)
+...     print(data['races'][0])
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>pprint</h2>
+
+                    <pre><code class="hljs">
+{u'raceTypeID': u'R', u'statePostal': u'FL', u'raceID': u'10673', u'national': True, u'officeName': u'President', u'lastUpdated': u'2016-03-02T15:42:49Z', u'candidates': [{u'candidateID': u'20408', u'last': u'Bush', u'polNum': u'14561', u'polID': u'1239', u'party': u'GOP', u'ballotOrder': 1, u'first': u'Jeb'}, {u'candidateID': u'20409', u'last': u'Carson', u'polNum': u'14562', u'polID': u'64509', u'party': u'GOP', u'ballotOrder': 2, u'first': u'Ben'}, {u'candidateID': u'20410', u'last': u'Christie', u'polNum': u'14563', u'polID': u'60051', u'party': u'GOP', u'ballotOrder': 3, u'first': u'Chris'}, {u'candidateID': u'20411', u'last': u'Cruz', u'polNum': u'14564', u'polID': u'61815', u'party': u'GOP', u'ballotOrder': 4, u'first': u'Ted'}, {u'candidateID': u'20414', u'last': u'Fiorina', u'polNum': u'14566', u'polID': u'60339', u'party': u'GOP', u'ballotOrder': 5, u'first': u'Carly'}, {u'candidateID': u'20416', u'last': u'Graham', u'polNum': u'14568', u'polID': u'1408', u'party': u'GOP', u'ballotOrder': 7, u'first': u'Lindsey'}, {u'abbrv': u'Huckabe', u'candidateID': u'20419', u'last': u'Huckabee', u'polNum': u'14569', u'polID': u'1187', u'party': u'GOP', u'ballotOrder': 8, u'first': u'Mike'}, {u'candidateID': u'20421', u'last': u'Kasich', u'polNum': u'14571', u'polID': u'36679', u'party': u'GOP', u'ballotOrder': 9, u'first': u'John'}, {u'candidateID': u'20423', u'last': u'Paul', u'polNum': u'14573', u'polID': u'60208', u'party': u'GOP', u'ballotOrder': 10, u'first': u'Rand'}, {u'candidateID': u'20425', u'last': u'Rubio', u'polNum': u'12082', u'polID': u'53044', u'party': u'GOP', u'ballotOrder': 11, u'first': u'Marco'}, {u'candidateID': u'20427', u'last': u'Santorum', u'polNum': u'13890', u'polID': u'1752', u'party': u'GOP', u'ballotOrder': 12, u'first': u'Rick'}, {u'candidateID': u'20428', u'last': u'Trump', u'polNum': u'14574', u'polID': u'8639', u'party': u'GOP', u'ballotOrder': 13, u'first': u'Donald'}, {u'candidateID': u'20429', u'last': u'Gilmore', u'polNum': u'14567', u'polID': u'45650', u'party': u'GOP', u'ballotOrder': 6, u'first': u'Jim'}], u'officeID': u'P', u'party': u'GOP'}
+                    </pre></code>
+                </section>
+
+                <section>
+                    <h2>pprint</h2>
+
+                    <pre><code class="hljs">
+>>> with open('tests/data/ap_elections_loader_recording-1456935370.json') as f:
+...     data = json.load(f)
+...     pprint.pprint(data['races'][0])
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>pprint</h2>
+
+                    <pre><code class="hljs">
+{u'candidates': [{u'ballotOrder': 1,
+                  u'candidateID': u'20408',
+                  u'first': u'Jeb',
+                  u'last': u'Bush',
+                  u'party': u'GOP',
+                  u'polID': u'1239',
+                  u'polNum': u'14561'},
+                 {u'ballotOrder': 2,
+                  u'candidateID': u'20409',
+                  u'first': u'Ben',
+                  u'last': u'Carson',
+                  u'party': u'GOP',
+                  u'polID': u'64509',
+                  u'polNum': u'14562'},
+                 {u'ballotOrder': 3,
+                  u'candidateID': u'20410',
+                  u'first': u'Chris',
+                  u'last': u'Christie',
+                  u'party': u'GOP',
+                  u'polID': u'60051',
+                  u'polNum': u'14563'},
+                 {u'ballotOrder': 4,
+                  u'candidateID': u'20411',
+                  u'first': u'Ted',
+                  u'last': u'Cruz',
+                  u'party': u'GOP',
+                  u'polID': u'61815',
+                  u'polNum': u'14564'},
+                 {u'ballotOrder': 5,
+                  u'candidateID': u'20414',
+                  u'first': u'Carly',
+                  u'last': u'Fiorina',
+                  u'party': u'GOP',
+                  u'polID': u'60339',
+                  u'polNum': u'14566'},
+                 {u'ballotOrder': 7,
+                  u'candidateID': u'20416',
+                  u'first': u'Lindsey',
+                  u'last': u'Graham',
+                  u'party': u'GOP',
+                  u'polID': u'1408',
+                  u'polNum': u'14568'},
+                 {u'abbrv': u'Huckabe',
+                  u'ballotOrder': 8,
+                  u'candidateID': u'20419',
+                  u'first': u'Mike',
+                  u'last': u'Huckabee',
+                  u'party': u'GOP',
+                  u'polID': u'1187',
+                  u'polNum': u'14569'},
+                 {u'ballotOrder': 9,
+                  u'candidateID': u'20421',
+                  u'first': u'John',
+                  u'last': u'Kasich',
+                  u'party': u'GOP',
+                  u'polID': u'36679',
+                  u'polNum': u'14571'},
+                    </pre></code>
+                </section>
+
+                <section>
+                    <h2>Logging</h2>
+
+                    <ul>
+                        <li>Loggers</li>
+                        <li>Formatters</li>
+                        <li>Handlers</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Logging basics</h2>
+
+                    <pre><code class="hljs">
+import logging
+logging.basicConfig(level=logging.DEBUG)
+logging.debug("Logging to the root logger")
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Our own loggers</h2>
+
+                    <pre><code class="hljs">
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler('debug_log.txt')
+logger.addHandler(handler)
+logger.debug("Testing logging debug messages")
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Excercise: logging to a file</h2>
+                    <p>Update <code>results.ChicagoResultsLoader.load()</code> to use a logger to log the contest code, candidate number, votes and, if available, the contest name, candidate name and party to a file named <code>results_log.txt</code>.</p>
+                </section>
+
+                <section>
+                    <h2>Check yourself with <code>assert</code></h2>
+
+                    <pre><code class="hljs">
+>>> from types import *
+>>> s = "foo"
+>>> assert type(s) is StringType, "Oops, s is not a string"
+>>> s = 27
+>>> assert type(s) is StringType, "Oops, s is not a string"
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+AssertionError: Oops, s is not a string
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Check yourself with <code>assert</code></h2>
+
+                    <pre><code class="hljs">
+def switchemup(items):
+    return [items[1].upper(), items[0].upper()]
+                    </code></pre>
+                    <p>What assumotions are we making? How could we use <code>assert</code> to check them?</p>
+                </section>
+
+                <section>
+                    <h2>Interactive debugging</h2>
+
+                    <ul>
+                        <li>convenience</li>
+                        <li>control</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>At a specific line in your code</h2>
+
+                    <p>Use <code>pdb.set_trace()</code></p>
+
+                    <pre><code class="hljs">
+>>> import pdb
+>>> def debug_this(i1, i2):
+...     result = i1
+...     for i in range(5):
+...         pdb.set_trace()
+...         result += i2
+...     return result
+...
+>>> debug_this()
+>>> debug_this(1, 1)
+> &lt;stdin&gt;(5)debug_this()
+(Pdb) 
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>On last exception</h2>
+
+                    <p>Use <code>pdb.post_mortem()</code> with <code>sys.exc_info()</code> (or <code>pdb.pm()</code>)</p>
+
+                    <pre><code class="hljs">
+>>> import pdb
+>>> import sys
+>>> def debug_this(i1, i2):
+...     try:
+...         result = i1
+...         return i1[i2]
+...     except Exception:
+...        exc_type, exc_value, exc_traceback = sys.exc_info()
+...        pdb.post_mortem(exc_traceback)
+...
+>>> debug_this(1, 1)
+> &lt;stdin&gt;(4)debug_this()
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Call a function and enter the debugger</h2>
+
+                    <p>Use <code>pdb.runcall()</code></p>
+
+                    <pre><code class="hljs">
+>>> import pdb
+>>> def debug_this(i1, i2):
+...     result = i1
+...     for i in range(5):
+...         result += i2
+...     return result
+...
+>>> pdb.runcall(debug_this, 1, 1)
+> &lt;stdin&gt;(2)debug_this()
+(Pdb)
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Debugger commands</h2>
+
+                    <p>Most commands have a single character alias.</p>
+                    <p><code>help &lt;topic&gt;</code></p>
+                    <p><code>(q)uit</code> exits the debugging session</p>
+                </section>
+
+                <section>
+                    <h2>(l)ist</h2>
+
+                    <pre><code class="hljs">
+python -m unittest tests.test_using_debugger
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(18)test_silly_thing()
+-> sillier_things = silly_things(things)
+(Pdb) l
+ 13                     "duck",
+ 14                     27,
+ 15                     "",
+ 16             ]
+ 17             pdb.set_trace()
+ 18  ->         sillier_things = silly_things(things)
+ 19             self.assertEqual(sillier_things[2], "silly duck")
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>(w)here</h2>
+
+                    <pre><code class="hljs">
+python -m unittest tests.test_using_debugger
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(18)test_silly_thing()
+-> sillier_things = silly_things(things)
+(Pdb) w
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/runpy.py(162)_run_module_as_main()
+-> "__main__", fname, loader, pkg_name)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/runpy.py(72)_run_code()
+-> exec code in run_globals
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/__main__.py(12)<module>()
+-> main(module=None)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/main.py(95)__init__()
+-> self.runTests()
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/main.py(232)runTests()
+-> self.result = testRunner.run(self.test)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/runner.py(151)run()
+-> test(result)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/suite.py(70)__call__()
+-> return self.run(*args, **kwds)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/suite.py(108)run()
+-> test(result)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/suite.py(70)__call__()
+-> return self.run(*args, **kwds)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/suite.py(108)run()
+-> test(result)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/suite.py(70)__call__()
+-> return self.run(*args, **kwds)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/suite.py(108)run()
+-> test(result)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/case.py(393)__call__()
+-> return self.run(*args, **kwds)
+  /usr/local/Cellar/python/2.7.11/Frameworks/Python.framework/Versions/2.7/lib/python2.7/unittest/case.py(329)run()
+-> testMethod()
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(18)test_silly_thing()
+-> sillier_things = silly_things(things)
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>(s)tep</h2>
+
+                    <pre><code class="hljs">
+python -m unittest tests.test_using_debugger
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(23)test_silly_thing()
+-> sillier_things = silly_things(things)
+(Pdb) l
+ 18                     "duck",
+ 19                     27,
+ 20                     "",
+ 21             ]
+ 22             pdb.set_trace()
+ 23  ->         sillier_things = silly_things(things)
+ 24             self.assertEqual(sillier_things[2], "silly duck")
+[EOF]
+(Pdb) s
+--Call--
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(4)silly_things()
+-> def silly_things(things):
+(Pdb) l
+  1     import pdb
+  2     import unittest
+  3
+  4  -> def silly_things(things):
+  5         sillier_things = []
+  6
+  7         for thing in things:
+  8             sillier_things.append("silly " + thing)
+  9
+ 10         return sillier_things
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>(b)reak</h2>
+
+                    <pre><code class="hljs">
+python -m unittest tests.test_using_debugger
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(23)test_silly_thing()
+-> sillier_things = silly_things(things)
+(Pdb) l
+ 18                     "duck",
+ 19                     27,
+ 20                     "",
+ 21             ]
+ 22             pdb.set_trace()
+ 23  ->         sillier_things = silly_things(things)
+ 24             self.assertEqual(sillier_things[2], "silly duck")
+[EOF]
+(Pdb) s
+--Call--
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(4)silly_things()
+-> def silly_things(things):
+(Pdb) l
+  1     import pdb
+  2     import unittest
+  3
+  4  -> def silly_things(things):
+  5         sillier_things = []
+  6
+  7         for thing in things:
+  8             sillier_things.append("silly " + thing)
+  9
+ 10         return sillier_things
+ 11
+(Pdb) b 8
+Breakpoint 1 at /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py:8
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>(c)ontinue</h2>
+
+                    <pre><code class="hljs">
+python -m unittest tests.test_using_debugger
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(23)test_silly_thing()
+-> sillier_things = silly_things(things)
+(Pdb) l
+ 18                     "duck",
+ 19                     27,
+ 20                     "",
+ 21             ]
+ 22             pdb.set_trace()
+ 23  ->         sillier_things = silly_things(things)
+ 24             self.assertEqual(sillier_things[2], "silly duck")
+[EOF]
+(Pdb) s
+--Call--
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(4)silly_things()
+-> def silly_things(things):
+(Pdb) l
+  1     import pdb
+  2     import unittest
+  3
+  4  -> def silly_things(things):
+  5         sillier_things = []
+  6
+  7         for thing in things:
+  8             sillier_things.append("silly " + thing)
+  9
+ 10         return sillier_things
+ 11
+(Pdb) b 8
+Breakpoint 1 at /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py:8
+(Pdb) c
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(8)silly_things()
+-> sillier_things.append("silly " + thing)
+(Pdb) c
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(8)silly_things()
+-> sillier_things.append("silly " + thing)
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Inspecting values</h2>
+
+                    <pre><code class="hljs">
+python -m unittest tests.test_using_debugger
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(23)test_silly_thing()
+-> sillier_things = silly_things(things)
+(Pdb) l
+ 18                     "duck",
+ 19                     27,
+ 20                     "",
+ 21             ]
+ 22             pdb.set_trace()
+ 23  ->         sillier_things = silly_things(things)
+ 24             self.assertEqual(sillier_things[2], "silly duck")
+[EOF]
+(Pdb) s
+--Call--
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(4)silly_things()
+-> def silly_things(things):
+(Pdb) l
+  1     import pdb
+  2     import unittest
+  3
+  4  -> def silly_things(things):
+  5         sillier_things = []
+  6
+  7         for thing in things:
+  8             sillier_things.append("silly " + thing)
+  9
+ 10         return sillier_things
+ 11
+(Pdb) b 8
+Breakpoint 1 at /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py:8
+(Pdb) c
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(8)silly_things()
+-> sillier_things.append("silly " + thing)
+(Pdb) c
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(8)silly_things()
+-> sillier_things.append("silly " + thing)
+(Pdb) print(thing)
+kitten
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>(u)p/(d)own</h2>
+
+                    <pre><code class="hljs">
+python -m unittest tests.test_using_debugger
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(23)test_silly_thing()
+-> sillier_things = silly_things(things)
+(Pdb) s
+--Call--
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(4)silly_things()
+-> def silly_things(things):
+(Pdb) l
+  1     import pdb
+  2     import unittest
+  3
+  4  -> def silly_things(things):
+  5         sillier_things = []
+  6
+  7         for thing in things:
+  8             sillier_things.append("silly " + thing)
+  9
+ 10         return sillier_things
+ 11
+(Pdb) u
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(23)test_silly_thing()
+-> sillier_things = silly_things(things)
+(Pdb) import pprint
+(Pdb) pprint.pprint(things)
+['rabbit', 'kitten', 'duck', 27, '']
+(Pdb) d
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(4)silly_things()
+-> def silly_things(things):
+(Pdb) l
+  1     import pdb
+  2     import unittest
+  3
+  4  -> def silly_things(things):
+  5         sillier_things = []
+  6
+  7         for thing in things:
+  8             sillier_things.append("silly " + thing)
+  9
+ 10         return sillier_things
+ 11
+(Pdb) s
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(5)silly_things()
+-> sillier_things = []
+(Pdb) s
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(7)silly_things()
+-> for thing in things:
+(Pdb) s
+> /Users/ghing/Dropbox/nicar2016/nicar2016-python-testing-debugging-excercises/tests/test_using_debugger.py(8)silly_things()
+-> sillier_things.append("silly " + thing)
+(Pdb) print(thing)
+rabbit
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Excercise: use the debugger to find wonky data</h2>
+                    <p>Run</p>
+                    <pre><code class="hljs">
+python -m unittest tests.test_chicago_result_loader.TestBrokenChicagoResultLoader
+                    </code></pre>
+                    
+                    <p>What exception is raised?</p>
+                    <p>Update <code>results.broken.BrokenChicagoResultsLoader</code> (in <code>results/broken.py</code>) to start the debugger</p>
+                    <p>What line in the data is causing problems? Why?</p>
+                </section>
+
+                <!--
+                <section>
+                    <h2></h2>
+
+                    <pre><code class="hljs">
+                    </code></pre>
+                </section>
+                -->
+
+				<section>
+                    <h1>Thanks!</h1>
+                    <p>
+                    Geoff Hing (geoffhing@gmail.com, <a href="https://twitter.com/geoffhing/">@geoffhing</a>)
+                    </p>
+                    <p>These slides: <a href="http://ghing.github.io/nicar2016-python-testing-debugging-slides">http://ghing.github.io/nicar2016-python-testing-debugging-slides</a></p> 
+                    <p>The excercises repo: <a href="https://github.com/ghing/nicar2016-python-testing-debugging-exercises/">https://github.com/ghing/nicar2016-python-testing-debugging-exercises/</a></p>
+				</section>
 
 			</div>
 
